@@ -1,6 +1,6 @@
 // S.Chekanov ANL
-// dijet+lepton analysis
-// Sep 30. Extended to 27 TeV
+// dijet studies using FatsJet 
+// created to debug Pythia8 features 
 
 #include <TROOT.h>
 #include <TFile.h>
@@ -8,24 +8,17 @@
 #include <TRandom2.h>
 #include <map>
 #include <limits>       // std::numeric_limits
-using namespace std;
 #include "TMath.h"
 #include "TObject.h"
 #include "TLorentzVector.h"
 #include <vector>
 #include <string>
-
-// ProMC file. Google does not like these warnings
-#pragma GCC diagnostic ignored "-pedantic"
-#pragma GCC diagnostic ignored "-Wshadow"
 #include "fastjet/PseudoJet.hh"
 #include "fastjet/ClusterSequence.hh"
-
 #include <TMath.h>
-const double kPI   = TMath::Pi();
-const double k2PI  = 2*kPI;
-
 #include "Pythia8/Pythia.h"
+
+using namespace std;
 using namespace Pythia8;
 using namespace fastjet;
 
@@ -51,18 +44,16 @@ int main(int argc, char* argv[]) {
 	// Check that correct number of command-line arguments
 	if (argc != 5) {
 		cerr << " Unexpected number of command-line arguments. \n You are"
-		<< " Arguments: input, output, nr_events, seed (or -1 for CPU seed)\n"
+		<< " Arguments: input, output, nr_events, seed (or -1 for automatic timestamps)\n"
 		<< " Program stopped! " << endl;
 		return 1;
 	}
-
 
 
 	cout << "HepSim:  Pythia8 Input Configuration =" << argv[1] << endl;
 	cout << "HepSim:  ProMC Output =" << argv[2] << endl;
 	cout << "HepSim:  Input events =" << argv[3] << endl;
         cout << "HepSim:  Input seed =" << argv[4] << endl;
-
 
 	string infile("-"), outfile("-"),  sevents("-"), strseed("-");
 	infile = argv[1];
@@ -131,8 +122,6 @@ int main(int argc, char* argv[]) {
 	s << versionNumber;
 	string version=s.str();
 
-
-	// fastjet
 	const double ptJet=50;
 	const double etaJet=2.4;
 	const double R = 0.4;
@@ -140,7 +129,6 @@ int main(int argc, char* argv[]) {
 	cout << "min PT jet=" << ptJet << endl;
 	cout << "max ETA jet=" << etaJet << endl;
 	cout << "jet R=" << R << endl;
- 
 	JetDefinition jet_def(antikt_algorithm, R);
 
 	// book a histogram, make sure that the output name is Analysis.root
@@ -222,11 +210,6 @@ print ranges
 			double px=pythia.event[i].px();
 			double py=pythia.event[i].py();
 			double pz=pythia.event[i].pz();
-			// double mm=pythia.event[i].m();
-			//double xx=pythia.event[i].xProd();
-			//double yy=pythia.event[i].yProd();
-			//double zz=pythia.event[i].zProd();
-			//double tt=pythia.event[i].tProd();
 			double pt=sqrt(px*px+py*py);
 			double eta=-log(tan(atan2(pt,(double)pz)/2));
 			if ( pt < 0.2)                   continue;
@@ -244,7 +227,8 @@ print ranges
 		vector<PseudoJet> inclusive_jets = clust_seq.inclusive_jets(0.9*ptJet);
 		vector<PseudoJet> sorted_jets = sorted_by_pt(inclusive_jets);
 		vector<PseudoJet> jets;
-                
+               
+	        // select jets	
 		for (unsigned int k = 0; k<sorted_jets.size(); k++) {
 			double eta=sorted_jets[k].pseudorapidity();
 			//double phi=sorted_jets[k].phi();
@@ -280,11 +264,6 @@ print ranges
 
 	// To check which changes have actually taken effect
 	pythia.settings.listChanged();
-	//pythia.particleData.listChanged();
-	//pythia.particleData.list(25);
-	//ParticleDataTable::listAll()
-	//ParticleDataTable::list(25);
-
 
 	pythia.stat();
 
