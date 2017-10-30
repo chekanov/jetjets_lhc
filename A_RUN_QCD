@@ -1,0 +1,12 @@
+#!/bin/bash
+#
+
+# first, setup singularity
+#singularity  exec ../singularity/centos7hepsim.img  bash -l
+# make -f Makefile
+# arguments: Nr of events and seed (or -1 for timestamp)
+
+source /opt/hepsim.sh 
+
+./main.exe tev14_QCD_A14_NNPDF23LO.py out_qcd.root 100 -1
+echo "done"
