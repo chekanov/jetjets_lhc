@@ -1,14 +1,12 @@
-# jetjets_lhc
-Example code for studies of jet-jet invariant masses
-# Dijet program for ANL HL-LHC studies 
-
-This program was created using HepSim (http://atlaswww.hep.anl.gov/hepsim/)
-software and Pythia8 control
-cards as used for the HepSim repository.
+# Dijet inavriant mass studies for HL-LHC 
+Example code for studies of jet-jet invariant masses.
 It is designed to study dijet masses for HL- and HE-LHC using Pythia8 model.
 
+To compile it, install PYTHIA8, ROOT, FASTJET, LHAPDF6.
+You can also use the HepSim singularity image (http://atlaswww.hep.anl.gov/hepsim/)
 
-## Running on Linux using HepSim image 
+
+## Running on Linux using the HepSim image 
 
 You can run this program on any Linux platform (including HPC)
 using the HepSim singularity/Docker file.
@@ -23,5 +21,12 @@ make
 ./A_RUN_ALL
 ```
 
+You can change the number of generated events inside the script A_RUN_ALL.
+The output of this program is out_qcd.root.  
+The main histogram is "JetJetMass_2jet", which is the invariant mass of two jets.
+
+To speed up the calculation, we use the phase-space reweighting.
+To get the proper dijet distribution, divide the histogram "JetJetMass_2jet" by the (variable) bin width,
+which is stored in the output ROOT file. Then use the stored cross section to calculate the differential cross section.
 
 S.Chekanov (ANL)
